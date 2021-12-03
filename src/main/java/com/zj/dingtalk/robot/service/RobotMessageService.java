@@ -7,10 +7,7 @@ import com.zj.dingtalk.robot.entity.DingtalkGroup;
 import com.zj.dingtalk.robot.entity.DingtalkGroupRelRobot;
 import com.zj.dingtalk.robot.entity.RobotMessage;
 import com.zj.dingtalk.robot.entity.RootMessageButtonLink;
-import com.zj.dingtalk.robot.mapper.DingtalkGroupMapper;
-import com.zj.dingtalk.robot.mapper.DingtalkGroupRelRobotMapper;
-import com.zj.dingtalk.robot.mapper.RobotMessageMapper;
-import com.zj.dingtalk.robot.mapper.RootMessageButtonLinkMapper;
+import com.zj.dingtalk.robot.mapper.*;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +16,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +49,9 @@ public class RobotMessageService {
 
     @Autowired
     ImageService imageService;
+
+    @Autowired
+    SystemParamService systemParamService;
 
     public RobotMessageService() {
         log.info("机器人服务初始化完成");
@@ -141,6 +142,13 @@ public class RobotMessageService {
                     log.info("机器人[{}]向群[{}]发送消息: {}", e, dg, JSON.toJSONString(sendMsgJSONObject));
                     ResponseEntity<JSONObject> exchange = restTemplate.exchange(e.getWebHook(), HttpMethod.POST, httpEntity, JSONObject.class);
                     log.info("发送返回: {}", JSON.toJSONString(exchange.getBody()));
+
+                    // 休眠
+                    try {
+                        Thread.sleep(Long.parseLong(systemParamService.getParam("robot_send_message_interval")));
+                    } catch (InterruptedException interruptedException) {
+                        interruptedException.printStackTrace();
+                    }
                 }
             }
         }
