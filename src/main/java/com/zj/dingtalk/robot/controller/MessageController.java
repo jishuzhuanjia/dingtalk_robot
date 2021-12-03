@@ -74,7 +74,7 @@ public class MessageController {
         Text text = new Text();
         text.setContent(robotMsgUtil.queryAnswer(question));
         textRobotMessage.setText(text);
-        robotMsgUtil.sendTextMessage("https://oapi.dingtalk.com/robot/send?access_token=e5ff02286d1e2416314d9961574dba27b34f0890b8f54dac33d62f3f8451f06f",
+        robotMsgUtil.sendTextMessage(message.getSessionWebhook(),
                 textRobotMessage);
         return  "OK";
     }
