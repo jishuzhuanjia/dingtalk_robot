@@ -2,6 +2,7 @@ package com.zj.dingtalk.robot.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.zj.dingtalk.robot.constants.RobotStatus;
 import com.zj.dingtalk.robot.entity.DingtalkGroup;
 import com.zj.dingtalk.robot.entity.DingtalkGroupRelRobot;
 import com.zj.dingtalk.robot.entity.RobotMessage;
@@ -74,6 +75,11 @@ public class RobotMessageService {
 
             // 每个机器人发送对应的消息
             for (DingtalkGroupRelRobot e : groupRobots) {
+
+                if(RobotStatus.OFF.getValue().equals(e.getStatus())){
+                    log.info("机器人处理关闭状态,不处理消息: {}",JSON.toJSONString(e));
+                    continue;
+                }
 
                 // 获取机器人在该群的消息
                 RobotMessage robotMessageQueryPO = new RobotMessage();

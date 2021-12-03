@@ -22,6 +22,4 @@ public class DingtalkGroup implements Serializable {
     private String groupName;
 
     private String des;
-
-
 }

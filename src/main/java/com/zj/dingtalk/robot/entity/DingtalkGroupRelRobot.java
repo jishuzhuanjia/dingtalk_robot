@@ -25,5 +25,6 @@ public class DingtalkGroupRelRobot implements Serializable {
 
     private String webHook;
 
+    private Integer status;
 
 }

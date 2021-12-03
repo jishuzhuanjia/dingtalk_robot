@@ -4,13 +4,18 @@ import com.alibaba.fastjson.JSON;
 import com.zj.dingtalk.robot.dto.RobotMsgRecvDTO;
 import com.zj.dingtalk.robot.po.robot.message.Text;
 import com.zj.dingtalk.robot.po.robot.message.TextRobotMessage;
+import com.zj.dingtalk.robot.service.RobotMessageService;
 import com.zj.dingtalk.robot.util.RobotMsgUtil;
+import com.zj.util.http.HttpUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -27,6 +32,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class MessageController {
 
     @Autowired
+    RobotMessageService robotMessageService;
+
+    @Autowired
     RobotMsgUtil robotMsgUtil;
 
 //    {
@@ -41,7 +49,7 @@ public class MessageController {
 //    }
 //    }
 
-    @RequestMapping(value = "receive",method = RequestMethod.POST)
+    /*@RequestMapping(value = "receive",method = RequestMethod.POST)
     public String message(@RequestBody RobotMsgRecvDTO message){
         log.info("机器人接收到信息: {}", JSON.toJSONString(message));
 
@@ -52,5 +60,29 @@ public class MessageController {
         robotMsgUtil.sendTextMessage("https://oapi.dingtalk.com/robot/send?access_token=e5ff02286d1e2416314d9961574dba27b34f0890b8f54dac33d62f3f8451f06f",
                 textRobotMessage);
         return "success";
+    }*/
+
+    //http://api.qingyunke.com/api.php?key=free&appid=0&msg=北京在哪里
+    @RequestMapping(value = "receive",method = RequestMethod.POST)
+    public String message(@RequestBody RobotMsgRecvDTO message){
+        log.info("机器人收到消息: {}",JSON.toJSONString(message));
+
+        String question = message.getText().get("content").toString().trim();
+        log.info("机器人收到问题: {}",question);
+
+        TextRobotMessage textRobotMessage = new TextRobotMessage();
+        Text text = new Text();
+        text.setContent(robotMsgUtil.queryAnswer(question));
+        textRobotMessage.setText(text);
+        robotMsgUtil.sendTextMessage("https://oapi.dingtalk.com/robot/send?access_token=e5ff02286d1e2416314d9961574dba27b34f0890b8f54dac33d62f3f8451f06f",
+                textRobotMessage);
+        return  "OK";
+    }
+
+    @RequestMapping("sendManual")
+    public String sendManual() throws JSONException {
+        log.info("手动触发机器人发送消息");
+        robotMessageService.sendTreesMessage();
+        return "SUCCESS!";
     }
 }
