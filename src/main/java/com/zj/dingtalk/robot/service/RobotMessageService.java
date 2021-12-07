@@ -60,7 +60,7 @@ public class RobotMessageService {
     /**
      * 机器人1: 种树信息整合
      */
-    @Scheduled(cron = "0 0/40 * * * *")
+    @Scheduled(cron = "0 0 0-2,6-23 * * *")
     public void sendTreesMessage() throws JSONException {
         log.info("机器人开始发送消息");
 
