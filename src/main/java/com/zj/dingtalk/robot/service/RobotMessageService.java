@@ -9,6 +9,7 @@ import com.zj.dingtalk.robot.entity.RobotMessage;
 import com.zj.dingtalk.robot.entity.RootMessageButtonLink;
 import com.zj.dingtalk.robot.mapper.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -119,7 +120,11 @@ public class RobotMessageService {
 
                     // actionCard;
                     JSONObject actionCardJSONObject = new JSONObject();
-                    actionCardJSONObject.put("text", "![screenshot]" + "(" + imageService.getRandomImageUrl() + ")\n\n #### " + rm.getContent());
+                    if(StringUtils.isNotBlank(rm.getContent())){
+                        actionCardJSONObject.put("text", "![screenshot]" + "(" + imageService.getRandomImageUrl() + ")\n\n ##### " + rm.getContent());
+                    }else {
+                        actionCardJSONObject.put("text", "![screenshot]" + "(" + imageService.getRandomImageUrl() + ")");
+                    }
                     actionCardJSONObject.put("title", rm.getTitle());
                     actionCardJSONObject.put("btnOrientation", "0");
 
